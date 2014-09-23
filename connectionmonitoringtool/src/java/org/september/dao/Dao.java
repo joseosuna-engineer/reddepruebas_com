@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import org.datanucleus.api.jpa.NucleusJPAHelper;
 import org.september.entity.Conexion;
 import org.september.service.EMFService;
 
@@ -23,15 +24,20 @@ public enum Dao {
             Long ayerContador, Date ayerFecha, Long ayerConnexion,
             Long mesContador, Date mesFecha, Long mesConnexion,
             Long yearContador, Date yearFecha, Long yearConnexion) {
-        synchronized (this) {
-            EntityManager em = EMFService.get().createEntityManager();
-            Conexion conexion = new Conexion(id, hoyContador, hoyFecha,
-                    hoyConnexion, ayerContador, ayerFecha, ayerConnexion,
-                    mesContador, mesFecha, mesConnexion, yearContador, yearFecha,
-                    yearConnexion);
-            em.persist(conexion);
-            em.close();
-        }
+
+        EntityManager em = EMFService.get().createEntityManager();
+        Conexion conexion = new Conexion(id, hoyContador, hoyFecha,
+                hoyConnexion, ayerContador, ayerFecha, ayerConnexion,
+                mesContador, mesFecha, mesConnexion, yearContador, yearFecha,
+                yearConnexion);
+        em.persist(conexion);
+        em.close();
+    }
+
+    public void update(Conexion conexion) {
+        EntityManager em = NucleusJPAHelper.getEntityManager(conexion);
+        em.merge(conexion);
+        em.close();
     }
 
 }
