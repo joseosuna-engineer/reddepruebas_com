@@ -48,6 +48,7 @@
                 <th>getHoyConnexion</th>
                 <th>getHoyContador</th>
                 <th>getHoyFecha</th>
+                <th>% desconexion </th>
             </tr>
 
             <% for (Conexion conexion : conexions) {%>
@@ -63,6 +64,9 @@
                 </td>
                 <td>
                     <%=conexion.getHoyFecha()%>
+                </td>
+                <td style="font-weight: bold;color: red;font-size: 14px;text-align: center;">
+                    <%=100-((conexion.getHoyConnexion()/conexion.getHoyContador())*100)%>
                 </td>
             </tr> 
             <%}
