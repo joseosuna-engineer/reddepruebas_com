@@ -24,7 +24,7 @@
             if (conexions.size() < 1) {
                 Date date = new Date();
 
-                Dao.INSTANCE.add(1L, 1L, date, 1L, 1L, date, 1L, 1L, date, 1L, 1L, date,
+                Dao.INSTANCE.add(1L, 1L, date, 1L, 1L, 1L, 1L, date, 1L, 1L, date,
                         1L);
 
                 conexions = dao.getConexions();
@@ -40,15 +40,22 @@
         </div>
 
         <div style="clear: both;"/>  
-        You have a total number of <%= conexions.size()%>  Conexiones.
+        Total de Registro de <%= conexions.size()%>  Conexiones.
 
         <table>
             <tr>
                 <th>getId </th>
-                <th>getHoyConnexion</th>
-                <th>getHoyContador</th>
-                <th>getHoyFecha</th>
-                <th>% desconexion </th>
+                <th>Conexiones Hoy</th>
+                <th>Intentos Hoy</th>
+                <th>Fecha Hoy</th>
+                <th>Conexiones Ayer</th>
+                <th>Intentos Ayer</th>
+                <th>Conexiones Mes</th>
+                <th>Intentos Mes</th>
+                <th>Fecha Mes</th>
+                <th>Conexiones A&ntilde;o</th>
+                <th>Intentos A&ntilde;o</th>
+                <th>Fecha A&ntilde;o</th>
             </tr>
 
             <% for (Conexion conexion : conexions) {%>
@@ -63,19 +70,68 @@
                     <%=conexion.getHoyContador()%>
                 </td>
                 <td>
-                    <%=conexion.getHoyFecha()%>
+                    <%=conexion.getSoloHoyFecha()%>
                 </td>
-                <td style="font-weight: bold;color: red;font-size: 14px;text-align: center;">
-                    <%=100-((conexion.getHoyConnexion()/conexion.getHoyContador())*100)%>
+                <td>
+                    <%=conexion.getAyerConnexion()%>
                 </td>
+                <td>
+                    <%=conexion.getAyerContador()%>
+                </td> 
+                <td>
+                    <%=conexion.getMesConnexion()%>
+                </td>
+                <td>
+                    <%=conexion.getMesContador()%>
+                </td>
+                <td>
+                    <%=conexion.getSoloMesFecha()%>
+                </td>
+                <td>
+                    <%=conexion.getYearConnexion()%>
+                </td>
+                <td>
+                    <%=conexion.getYearContador()%>
+                </td>
+                <td>
+                    <%=conexion.getSoloYearFecha()%>
+                </td>                
             </tr> 
             <%}
             %>
         </table>
 
 
+        <br />
+        % de desconexion 
+        <table>
+            <tr>               
+                <th>% desconexion Hoy</th>
+                <th>% desconexion Ayer</th>
+                <th>% desconexion Mes</th>
+                <th>% desconexion A&ntilde;o</th>                
+            </tr>
+
+            <% for (Conexion conexion : conexions) {%>
+            <tr> 
+                <td>
+                    <%=100 - ((conexion.getHoyConnexion() / conexion.getHoyContador()) * 100)%>
+                </td>
+                <td>
+                    <%=100 - ((conexion.getAyerConnexion() / conexion.getAyerContador()) * 100)%>
+                </td>
+                <td>
+                    <%=100 - ((conexion.getMesConnexion() / conexion.getMesContador()) * 100)%>
+                </td>
+                <td>
+                    <%=100 - ((conexion.getYearConnexion() / conexion.getYearContador()) * 100)%>
+                </td>
+            </tr> 
+            <%}
+            %>
+        </table>
+
+        <br />
         <hr />
-
-
     </body>
 </html> 

@@ -1,6 +1,7 @@
 package org.september.entity;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,8 +24,6 @@ public class Conexion implements Serializable {
     Long hoyConnexion;
 
     Long ayerContador;
-    @Temporal(TemporalType.TIMESTAMP)
-    Date ayerFecha;
     Long ayerConnexion;
 
     Long mesContador;
@@ -40,13 +39,12 @@ public class Conexion implements Serializable {
     public Conexion() {
     }
 
-    public Conexion(Long id, Long hoyContador, Date hoyFecha, Long hoyConnexion, Long ayerContador, Date ayerFecha, Long ayerConnexion, Long mesContador, Date mesFecha, Long mesConnexion, Long yearContador, Date yearFecha, Long yearConnexion) {
+    public Conexion(Long id, Long hoyContador, Date hoyFecha, Long hoyConnexion, Long ayerContador, Long ayerConnexion, Long mesContador, Date mesFecha, Long mesConnexion, Long yearContador, Date yearFecha, Long yearConnexion) {
         this.id = id;
         this.hoyContador = hoyContador;
         this.hoyFecha = hoyFecha;
         this.hoyConnexion = hoyConnexion;
         this.ayerContador = ayerContador;
-        this.ayerFecha = ayerFecha;
         this.ayerConnexion = ayerConnexion;
         this.mesContador = mesContador;
         this.mesFecha = mesFecha;
@@ -94,14 +92,6 @@ public class Conexion implements Serializable {
 
     public void setAyerContador(Long ayerContador) {
         this.ayerContador = ayerContador;
-    }
-
-    public Date getAyerFecha() {
-        return ayerFecha;
-    }
-
-    public void setAyerFecha(Date ayerFecha) {
-        this.ayerFecha = ayerFecha;
     }
 
     public Long getAyerConnexion() {
@@ -158,6 +148,24 @@ public class Conexion implements Serializable {
 
     public void setYearConnexion(Long yearConnexion) {
         this.yearConnexion = yearConnexion;
+    }
+
+    public int getSoloHoyFecha() {
+        Calendar cRegistroHoy = Calendar.getInstance();
+        cRegistroHoy.setTime(this.getHoyFecha());
+        return cRegistroHoy.get(Calendar.DATE);
+    }
+
+    public int getSoloMesFecha() {
+        Calendar cRegistroMes = Calendar.getInstance();
+        cRegistroMes.setTime(this.getMesFecha());
+        return cRegistroMes.get(Calendar.MONTH);
+    }
+
+    public int getSoloYearFecha() {
+        Calendar cRegistroYear = Calendar.getInstance();
+        cRegistroYear.setTime(this.getYearFecha());
+        return cRegistroYear.get(Calendar.YEAR);
     }
 
     @Override
