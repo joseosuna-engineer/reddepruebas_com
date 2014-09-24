@@ -11,8 +11,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.september.dao.Dao;
+import org.september.dao.DaoConexion;
+import org.september.dao.DaoConexionMensual;
 import org.september.entity.Conexion;
+import org.september.entity.ConexionMensual;
 import org.september.util.EnumProperty;
 
 public class VerifyConectionServlet extends HttpServlet {
@@ -30,9 +32,12 @@ public class VerifyConectionServlet extends HttpServlet {
 
             int code = connection.getResponseCode();
 
-            Dao dao = Dao.INSTANCE;
+            DaoConexion daoConexion = DaoConexion.INSTANCE;
+            DaoConexionMensual daoConexionMensual = DaoConexionMensual.INSTANCE;
 
-            List<Conexion> conexions = dao.getConexions();
+            List<Conexion> conexions = daoConexion.getConexions();
+            List<ConexionMensual> conexionMensuals = daoConexionMensual.
+                    getConexionsMensual();
 
             if (conexions.size() > 0) {
 
@@ -43,20 +48,20 @@ public class VerifyConectionServlet extends HttpServlet {
 
                 Conexion conexion = conexions.get(0);
 
-                if (code == 200) {
+                Date dateRegistroHoy = conexion.getHoyFecha();
+                Date dateRegistroMes = conexion.getMesFecha();
+                Date dateRegistroYear = conexion.getYearFecha();
+                Calendar cRegistroHoy = Calendar.getInstance();
+                Calendar cRegistroMes = Calendar.getInstance();
+                Calendar cRegistroYear = Calendar.getInstance();
+                cRegistroHoy.setTime(dateRegistroHoy);
+                cRegistroMes.setTime(dateRegistroMes);
+                cRegistroYear.setTime(dateRegistroYear);
+                int hoyRegistro = cRegistroHoy.get(Calendar.DATE);
+                int mesRegistro = cRegistroMes.get(Calendar.MONTH);
+                int yearRegistro = cRegistroYear.get(Calendar.YEAR);
 
-                    Date dateRegistroHoy = conexion.getHoyFecha();
-                    Date dateRegistroMes = conexion.getMesFecha();
-                    Date dateRegistroYear = conexion.getYearFecha();
-                    Calendar cRegistroHoy = Calendar.getInstance();
-                    Calendar cRegistroMes = Calendar.getInstance();
-                    Calendar cRegistroYear = Calendar.getInstance();
-                    cRegistroHoy.setTime(dateRegistroHoy);
-                    cRegistroMes.setTime(dateRegistroMes);
-                    cRegistroYear.setTime(dateRegistroYear);
-                    int hoyRegistro = cRegistroHoy.get(Calendar.DATE);
-                    int mesRegistro = cRegistroMes.get(Calendar.MONTH);
-                    int yearRegistro = cRegistroYear.get(Calendar.YEAR);
+                if (code == 200) {
 
                     if (hoy == hoyRegistro) {
                         conexion.setHoyConnexion(conexion.getHoyConnexion() + 1);
@@ -72,8 +77,18 @@ public class VerifyConectionServlet extends HttpServlet {
                         conexion.setMesConnexion(conexion.getMesConnexion() + 1);
                         conexion.setMesContador(conexion.getMesContador() + 1);
                     } else {
-                        //TODO:Falta agregar los registros del mes en curso a 
-                        //mes anterior
+
+                        ConexionMensual cm = new ConexionMensual();
+                        for (ConexionMensual cms : conexionMensuals) {
+                            Long mesL = new Long(mes);
+                            if (cms.getId().equals(mesL)) {
+                                cm = cms;
+                            }
+                        }
+                        cm.setMesConnexion(conexion.getMesConnexion());
+                        cm.setMesContador(conexion.getMesContador());
+                        daoConexionMensual.update(cm);
+
                         conexion.setMesConnexion(1L);
                         conexion.setMesContador(1L);
                         conexion.setMesFecha(new Date());
@@ -88,11 +103,47 @@ public class VerifyConectionServlet extends HttpServlet {
                         conexion.setYearFecha(new Date());
                     }
 
-                    dao.update(conexion);
+                    daoConexion.update(conexion);
                 } else {
-                    conexion.setHoyConnexion(conexion.getHoyConnexion() + 1);
 
-                    dao.update(conexion);
+                    if (hoy == hoyRegistro) {
+                        conexion.setHoyContador(conexion.getHoyContador() + 1);
+                    } else {
+                        conexion.setAyerConnexion(conexion.getHoyConnexion());
+                        conexion.setAyerContador(conexion.getHoyContador());
+                        conexion.setHoyConnexion(0L);
+                        conexion.setHoyContador(1L);
+                        conexion.setHoyFecha(new Date());
+                    }
+                    if (mes == mesRegistro) {
+                        conexion.setMesContador(conexion.getMesContador() + 1);
+                    } else {
+
+                        ConexionMensual cm = new ConexionMensual();
+                        for (ConexionMensual cms : conexionMensuals) {
+                            Long mesL = new Long(mes);
+                            if (cms.getId().equals(mesL)) {
+                                cm = cms;
+                            }
+                        }
+                        cm.setMesConnexion(conexion.getMesConnexion());
+                        cm.setMesContador(conexion.getMesContador());
+                        daoConexionMensual.update(cm);
+
+                        conexion.setMesConnexion(0L);
+                        conexion.setMesContador(1L);
+                        conexion.setMesFecha(new Date());
+                    }
+                    if (year == yearRegistro) {
+                        conexion.setYearContador(conexion.getYearContador() + 1);
+                    } else {
+                        //TODO:Falta guardar el year en curso
+                        conexion.setYearConnexion(0L);
+                        conexion.setYearContador(1L);
+                        conexion.setYearFecha(new Date());
+                    }
+
+                    daoConexion.update(conexion);
                 }
 
             }
