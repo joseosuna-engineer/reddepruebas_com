@@ -9,7 +9,7 @@ import org.datanucleus.api.jpa.NucleusJPAHelper;
 import org.september.entity.Conexion;
 import org.september.service.EMFService;
 
-public enum Dao {
+public enum DaoConexion {
 
     INSTANCE;
 

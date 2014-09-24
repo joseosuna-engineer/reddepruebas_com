@@ -1,6 +1,9 @@
+<%@page import="java.util.Collections"%>
+<%@page import="org.september.entity.ConexionMensual"%>
 <%@page import="java.util.Date"%>
 <%@page import="org.september.entity.Conexion"%>
-<%@page import="org.september.dao.Dao"%>
+<%@page import="org.september.dao.DaoConexion"%>
+<%@page import="org.september.dao.DaoConexionMensual"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 
@@ -18,18 +21,29 @@
     </head>
     <body>
         <%
-            Dao dao = Dao.INSTANCE;
-            List<Conexion> conexions = dao.getConexions();
+            DaoConexion daoConexion = DaoConexion.INSTANCE;
+            List<Conexion> conexions = daoConexion.getConexions();
 
             if (conexions.size() < 1) {
                 Date date = new Date();
 
-                Dao.INSTANCE.add(1L, 1L, date, 1L, 1L, 1L, 1L, date, 1L, 1L, date,
-                        1L);
+                DaoConexion.INSTANCE.add(1L, 1L, date, 1L, 1L, 1L, 2L, date, 2L,
+                        2L, date, 2L);
 
-                conexions = dao.getConexions();
+                conexions = daoConexion.getConexions();
             }
 
+            DaoConexionMensual daoConexionMensual = DaoConexionMensual.INSTANCE;
+            List<ConexionMensual> conexionsMensual = daoConexionMensual.
+                    getConexionsMensual();
+
+            if (conexionsMensual.size() < 1) {
+                for (int i = 1; i < 13; i++) {
+                    Long iL = new Long(i);
+                    DaoConexionMensual.INSTANCE.add(iL, 1L, 1L);
+                }
+                conexionsMensual = daoConexionMensual.getConexionsMensual();
+            }
         %>
         <div style="width: 100%;">
             <div class="line"></div>
@@ -69,7 +83,7 @@
                 <td>
                     <%=conexion.getHoyContador()%>
                 </td>
-                <td>
+                <td style="color:grey">
                     <%=conexion.getSoloHoyFecha()%>
                 </td>
                 <td>
@@ -84,7 +98,7 @@
                 <td>
                     <%=conexion.getMesContador()%>
                 </td>
-                <td>
+                <td style="color:grey">
                     <%=conexion.getSoloMesFecha()%>
                 </td>
                 <td>
@@ -93,7 +107,7 @@
                 <td>
                     <%=conexion.getYearContador()%>
                 </td>
-                <td>
+                <td style="color:grey">
                     <%=conexion.getSoloYearFecha()%>
                 </td>                
             </tr> 
@@ -104,7 +118,7 @@
 
         <br />
         % de desconexion 
-        <table>
+        <table class="red-color-table">
             <tr>               
                 <th>% desconexion Hoy</th>
                 <th>% desconexion Ayer</th>
@@ -115,16 +129,20 @@
             <% for (Conexion conexion : conexions) {%>
             <tr> 
                 <td>
-                    <%=100 - ((conexion.getHoyConnexion() / conexion.getHoyContador()) * 100)%>
+                    <%=100 - ((conexion.getHoyConnexion()
+                            / conexion.getHoyContador()) * 100)%>
                 </td>
                 <td>
-                    <%=100 - ((conexion.getAyerConnexion() / conexion.getAyerContador()) * 100)%>
+                    <%=100 - ((conexion.getAyerConnexion()
+                            / conexion.getAyerContador()) * 100)%>
                 </td>
                 <td>
-                    <%=100 - ((conexion.getMesConnexion() / conexion.getMesContador()) * 100)%>
+                    <%=100 - ((conexion.getMesConnexion()
+                            / conexion.getMesContador()) * 100)%>
                 </td>
                 <td>
-                    <%=100 - ((conexion.getYearConnexion() / conexion.getYearContador()) * 100)%>
+                    <%=100 - ((conexion.getYearConnexion()
+                            / conexion.getYearContador()) * 100)%>
                 </td>
             </tr> 
             <%}
@@ -132,6 +150,30 @@
         </table>
 
         <br />
+
+        % de desconexion Mensual
+        <table class="red-color-table">
+            <tr>               
+                <th>Mes</th>
+                <th>% desconexion</th>                            
+            </tr>
+
+            <% for (ConexionMensual conexionMensual : conexionsMensual) {%>
+            <tr> 
+                <td>
+                    <%=conexionMensual.getMes()%>
+                </td>
+                <td>
+                    <%= 100 - ((conexionMensual.getMesConnexion()
+                            / conexionMensual.getMesContador()) * 100)%>
+                </td>              
+            </tr> 
+            <%}
+            %>
+        </table>
+
+        <br />
         <hr />
+
     </body>
 </html> 
