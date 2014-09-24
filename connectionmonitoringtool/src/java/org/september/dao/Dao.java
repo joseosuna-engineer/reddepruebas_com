@@ -21,13 +21,13 @@ public enum Dao {
     }
 
     public void add(Long id, Long hoyContador, Date hoyFecha, Long hoyConnexion,
-            Long ayerContador, Date ayerFecha, Long ayerConnexion,
+            Long ayerContador, Long ayerConnexion,
             Long mesContador, Date mesFecha, Long mesConnexion,
             Long yearContador, Date yearFecha, Long yearConnexion) {
 
         EntityManager em = EMFService.get().createEntityManager();
         Conexion conexion = new Conexion(id, hoyContador, hoyFecha,
-                hoyConnexion, ayerContador, ayerFecha, ayerConnexion,
+                hoyConnexion, ayerContador, ayerConnexion,
                 mesContador, mesFecha, mesConnexion, yearContador, yearFecha,
                 yearConnexion);
         em.persist(conexion);
