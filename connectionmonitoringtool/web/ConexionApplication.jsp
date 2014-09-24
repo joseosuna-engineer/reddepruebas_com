@@ -1,3 +1,5 @@
+<%@page import="org.september.util.ConexionMensualComparable"%>
+<%@page import="org.september.util.DateUtil"%>
 <%@page import="java.util.Collections"%>
 <%@page import="org.september.entity.ConexionMensual"%>
 <%@page import="java.util.Date"%>
@@ -44,6 +46,13 @@
                 }
                 conexionsMensual = daoConexionMensual.getConexionsMensual();
             }
+
+            List<ConexionMensual> conexionsMensualTemp
+                    = new ArrayList<ConexionMensual>(conexionsMensual);
+            Collections.sort(conexionsMensualTemp, new ConexionMensualComparable());
+
+            List<ConexionMensual> conexionsMensualOrd = new ArrayList<ConexionMensual>(conexionsMensualTemp);
+
         %>
         <div style="width: 100%;">
             <div class="line"></div>
@@ -54,6 +63,7 @@
         </div>
 
         <div style="clear: both;"/>  
+        <br />
         Total de Registro de <%= conexions.size()%>  Conexiones.
 
         <table>
@@ -99,7 +109,7 @@
                     <%=conexion.getMesContador()%>
                 </td>
                 <td style="color:grey">
-                    <%=conexion.getSoloMesFecha()%>
+                    <%=DateUtil.getMonthName(conexion.getSoloMesFecha())%>
                 </td>
                 <td>
                     <%=conexion.getYearConnexion()%>
@@ -118,7 +128,7 @@
 
         <br />
         % de desconexion 
-        <table class="red-color-table">
+        <table class="red-color-table-td">
             <tr>               
                 <th>% desconexion Hoy</th>
                 <th>% desconexion Ayer</th>
@@ -152,18 +162,18 @@
         <br />
 
         % de desconexion Mensual
-        <table class="red-color-table">
+        <table >
             <tr>               
                 <th>Mes</th>
                 <th>% desconexion</th>                            
             </tr>
 
-            <% for (ConexionMensual conexionMensual : conexionsMensual) {%>
+            <% for (ConexionMensual conexionMensual : conexionsMensualOrd) {%>
             <tr> 
                 <td>
-                    <%=conexionMensual.getMes()%>
+                    <%=DateUtil.getMonthName(conexionMensual.getMes().intValue() - 1)%>                   
                 </td>
-                <td>
+                <td class="red-color-table">
                     <%= 100 - ((conexionMensual.getMesConnexion()
                             / conexionMensual.getMesContador()) * 100)%>
                 </td>              
