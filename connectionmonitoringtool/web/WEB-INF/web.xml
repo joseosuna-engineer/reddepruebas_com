@@ -4,9 +4,17 @@
         <servlet-name>VerifyConectionServlet</servlet-name>
         <servlet-class>org.september.servlet.VerifyConectionServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MailServlet</servlet-name>
+        <servlet-class>org.september.servlet.MailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>VerifyConectionServlet</servlet-name>
         <url-pattern>/verify</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MailServlet</servlet-name>
+        <url-pattern>/mail</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>ConexionApplication.jsp</welcome-file>
