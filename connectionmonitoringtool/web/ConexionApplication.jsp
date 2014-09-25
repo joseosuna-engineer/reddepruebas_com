@@ -1,3 +1,4 @@
+<%@page import="java.text.DecimalFormat"%>
 <%@page import="org.september.util.ConexionMensualComparable"%>
 <%@page import="org.september.util.DateUtil"%>
 <%@page import="java.util.Collections"%>
@@ -52,6 +53,8 @@
             Collections.sort(conexionsMensualTemp, new ConexionMensualComparable());
 
             List<ConexionMensual> conexionsMensualOrd = new ArrayList<ConexionMensual>(conexionsMensualTemp);
+            
+            DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
         %>
         <div style="width: 100%;">
@@ -136,23 +139,32 @@
                 <th>% desconexion A&ntilde;o</th>                
             </tr>
 
-            <% for (Conexion conexion : conexions) {%>
+            <% for (Conexion conexion : conexions) {
+                    double coxH = conexion.getHoyConnexion();
+                    double conH = conexion.getHoyContador();
+                    double perH = 100 - ((coxH / conH) * 100);
+                    double coxA = conexion.getAyerConnexion();
+                    double conA = conexion.getAyerContador();
+                    double perA = 100 - ((coxA / conA) * 100);
+                    double coxM = conexion.getMesConnexion();
+                    double conM = conexion.getMesContador();
+                    double perM = 100 - ((coxM / conM) * 100);
+                    double coxY = conexion.getYearConnexion();
+                    double conY = conexion.getYearContador();
+                    double perY = 100 - ((coxY / conY) * 100);
+            %>
             <tr> 
                 <td>
-                    <%=100 - ((conexion.getHoyConnexion()
-                            / conexion.getHoyContador()) * 100)%>
+                    <%=decimalFormat.format(perH)%>
                 </td>
                 <td>
-                    <%=100 - ((conexion.getAyerConnexion()
-                            / conexion.getAyerContador()) * 100)%>
+                    <%=decimalFormat.format(perA)%>
                 </td>
                 <td>
-                    <%=100 - ((conexion.getMesConnexion()
-                            / conexion.getMesContador()) * 100)%>
+                    <%=decimalFormat.format(perM)%>
                 </td>
                 <td>
-                    <%=100 - ((conexion.getYearConnexion()
-                            / conexion.getYearContador()) * 100)%>
+                    <%=decimalFormat.format(perY)%>
                 </td>
             </tr> 
             <%}
@@ -168,14 +180,17 @@
                 <th>% desconexion</th>                            
             </tr>
 
-            <% for (ConexionMensual conexionMensual : conexionsMensualOrd) {%>
+            <% for (ConexionMensual conexionMensual : conexionsMensualOrd) {
+                    double coxM = conexionMensual.getMesConnexion();
+                    double conM = conexionMensual.getMesContador();
+                    double perM = 100 - ((coxM / conM) * 100);
+            %>
             <tr> 
                 <td>
                     <%=DateUtil.getMonthName(conexionMensual.getMes().intValue() - 1)%>                   
                 </td>
                 <td class="red-color-table">
-                    <%= 100 - ((conexionMensual.getMesConnexion()
-                            / conexionMensual.getMesContador()) * 100)%>
+                    <%=decimalFormat.format(perM)%>
                 </td>              
             </tr> 
             <%}
