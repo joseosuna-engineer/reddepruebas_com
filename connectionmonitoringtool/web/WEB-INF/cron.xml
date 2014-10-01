@@ -11,6 +11,6 @@
         <url>/mail</url>
         <description>Send report conection every day on 12 UTC</description>
         <schedule>every day 12:00</schedule>
-    </cron>     
+    </cron>  
     
 </cronentries>
