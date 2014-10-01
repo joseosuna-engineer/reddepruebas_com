@@ -39,7 +39,7 @@ public class VerifyConectionServlet extends HttpServlet {
             List<ConexionMensual> conexionMensuals = daoConexionMensual.
                     getConexionsMensual();
 
-            if (conexions.size() > 0) {
+            if (conexions.size() > 0 && conexionMensuals.size()>0) {
 
                 Calendar cHoy = Calendar.getInstance();
                 int hoy = cHoy.get(Calendar.DATE);
@@ -61,33 +61,31 @@ public class VerifyConectionServlet extends HttpServlet {
                 int mesRegistro = cRegistroMes.get(Calendar.MONTH);
                 int yearRegistro = cRegistroYear.get(Calendar.YEAR);
 
-                if (code == 200) {
+                if (code == 200) { // se conecto
 
-                    if (hoy == hoyRegistro) {
+                    if (hoy == hoyRegistro) {  // el dia no ha cambiado
                         conexion.setHoyConnexion(conexion.getHoyConnexion() + 1);
                         conexion.setHoyContador(conexion.getHoyContador() + 1);
-                    } else {
+                    } else { // el dia cambio
                         conexion.setAyerConnexion(conexion.getHoyConnexion());
                         conexion.setAyerContador(conexion.getHoyContador());
                         conexion.setHoyConnexion(1L);
                         conexion.setHoyContador(1L);
                         conexion.setHoyFecha(new Date());
                     }
-                    if (mes == mesRegistro) {
+                    if (mes == mesRegistro) { // el mes es el mismo
                         conexion.setMesConnexion(conexion.getMesConnexion() + 1);
                         conexion.setMesContador(conexion.getMesContador() + 1);
-                    } else {
-
-                        ConexionMensual cm = new ConexionMensual();
+                    } else { // el mes cambio
+                             // busco el mes y actualizo                        
                         for (ConexionMensual cms : conexionMensuals) {
                             Long mesL = new Long(mes);
-                            if (cms.getId().equals(mesL)) {
-                                cm = cms;
+                            if (cms.getMes().equals(mesL)) {
+                                cms.setMesConnexion(conexion.getMesConnexion());
+                                cms.setMesContador(conexion.getMesContador());                        
+                                daoConexionMensual.update(cms);
                             }
-                        }
-                        cm.setMesConnexion(conexion.getMesConnexion());
-                        cm.setMesContador(conexion.getMesContador());
-                        daoConexionMensual.update(cm);
+                        }                       
 
                         conexion.setMesConnexion(1L);
                         conexion.setMesContador(1L);
@@ -104,7 +102,7 @@ public class VerifyConectionServlet extends HttpServlet {
                     }
 
                     daoConexion.update(conexion);
-                } else {
+                } else { // no se conecto
 
                     if (hoy == hoyRegistro) {
                         conexion.setHoyContador(conexion.getHoyContador() + 1);
@@ -117,18 +115,16 @@ public class VerifyConectionServlet extends HttpServlet {
                     }
                     if (mes == mesRegistro) {
                         conexion.setMesContador(conexion.getMesContador() + 1);
-                    } else {
-
-                        ConexionMensual cm = new ConexionMensual();
+                    } else { // el mes cambio
+                        // busco el mes y actualizo                        
                         for (ConexionMensual cms : conexionMensuals) {
                             Long mesL = new Long(mes);
-                            if (cms.getId().equals(mesL)) {
-                                cm = cms;
+                            if (cms.getMes().equals(mesL)) {
+                                cms.setMesConnexion(conexion.getMesConnexion());
+                                cms.setMesContador(conexion.getMesContador());                        
+                                daoConexionMensual.update(cms);
                             }
-                        }
-                        cm.setMesConnexion(conexion.getMesConnexion());
-                        cm.setMesContador(conexion.getMesContador());
-                        daoConexionMensual.update(cm);
+                        } 
 
                         conexion.setMesConnexion(0L);
                         conexion.setMesContador(1L);
