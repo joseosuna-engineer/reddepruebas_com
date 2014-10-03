@@ -12,8 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.september.dao.DaoConexion;
+import org.september.dao.DaoConexionAnual;
 import org.september.dao.DaoConexionMensual;
 import org.september.entity.Conexion;
+import org.september.entity.ConexionAnual;
 import org.september.entity.ConexionMensual;
 import org.september.util.EnumProperty;
 
@@ -34,12 +36,15 @@ public class VerifyConectionServlet extends HttpServlet {
 
             DaoConexion daoConexion = DaoConexion.INSTANCE;
             DaoConexionMensual daoConexionMensual = DaoConexionMensual.INSTANCE;
+            DaoConexionAnual daoConexionAnual = DaoConexionAnual.INSTANCE;
 
             List<Conexion> conexions = daoConexion.getConexions();
             List<ConexionMensual> conexionMensuals = daoConexionMensual.
                     getConexionsMensual();
+            List<ConexionAnual> conexionAnuals = daoConexionAnual.
+                    getConexionsAnual();
 
-            if (conexions.size() > 0 && conexionMensuals.size()>0) {
+            if (conexions.size() > 0 && conexionMensuals.size()>0 && conexionAnuals.size()>0) {
 
                 Calendar cHoy = Calendar.getInstance();
                 int hoy = cHoy.get(Calendar.DATE);
@@ -94,8 +99,17 @@ public class VerifyConectionServlet extends HttpServlet {
                     if (year == yearRegistro) {
                         conexion.setYearConnexion(conexion.getYearConnexion() + 1);
                         conexion.setYearContador(conexion.getYearContador() + 1);
-                    } else {
-                        //TODO:Falta guardar el year en curso
+                    } else { // el year cambio
+                        // busco el year y actualizo                        
+                        for (ConexionAnual cas : conexionAnuals) {
+                            Long yearL = new Long(year);
+                            if (cas.getYear().equals(yearL)) {
+                                cas.setYearConnexion(conexion.getYearConnexion());
+                                cas.setYearContador(conexion.getYearContador());                        
+                                daoConexionAnual.update(cas);
+                            }
+                        }  
+                      
                         conexion.setYearConnexion(1L);
                         conexion.setYearContador(1L);
                         conexion.setYearFecha(new Date());
@@ -132,8 +146,16 @@ public class VerifyConectionServlet extends HttpServlet {
                     }
                     if (year == yearRegistro) {
                         conexion.setYearContador(conexion.getYearContador() + 1);
-                    } else {
-                        //TODO:Falta guardar el year en curso
+                    } else {// el year cambio
+                        // busco el year y actualizo                        
+                        for (ConexionAnual cas : conexionAnuals) {
+                            Long yearL = new Long(year);
+                            if (cas.getYear().equals(yearL)) {
+                                cas.setYearConnexion(conexion.getYearConnexion());
+                                cas.setYearContador(conexion.getYearContador());                        
+                                daoConexionAnual.update(cas);
+                            }
+                        }
                         conexion.setYearConnexion(0L);
                         conexion.setYearContador(1L);
                         conexion.setYearFecha(new Date());
