@@ -1,3 +1,5 @@
+<%@page import="org.september.util.StatusEnum"%>
+<%@page import="org.september.util.GeneralUtil"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="org.september.entity.ConexionAnual"%>
 <%@page import="org.september.dao.DaoConexionAnual"%>
@@ -34,7 +36,7 @@
                 Date date = new Date();
 
                 DaoConexion.INSTANCE.add(1L, 1L, date, 1L, 1L, 1L, 2L, date, 2L,
-                        2L, date, 2L);
+                        2L, date, 2L,StatusEnum.STATUS_ESTABLE.getValue(),0);
 
                 conexions = daoConexion.getConexions();
             }
@@ -82,6 +84,15 @@
         </div>
 
         <div style="clear: both;"/>  
+        
+        <br />
+        Estado de la conexion: <% if(conexions.size()>0){ %>
+        <span style="font-size: 18px;font-weight: bolder; color: 
+              <%=  (conexions.get(0).getStatus()==StatusEnum.STATUS_CRITICO.getValue())?
+                      "red":(conexions.get(0).getStatus()==StatusEnum.STATUS_ESTABLE.getValue())?
+                      "green":"orange"  %>"> <%=  GeneralUtil.getStatusName(conexions.get(0).getStatus())  %></span>  
+          <%    }  %>  
+        <br />
         <br />
         Total de Registro de <%= conexions.size()%>  Conexiones.
 
@@ -99,6 +110,7 @@
                 <th>Conexiones A&ntilde;o</th>
                 <th>Intentos A&ntilde;o</th>
                 <th>Fecha A&ntilde;o</th>
+                <th>Contador de Estados</th>
             </tr>
 
             <% for (Conexion conexion : conexions) {%>
@@ -138,7 +150,10 @@
                 </td>
                 <td style="color:grey">
                     <%=conexion.getSoloYearFecha()%>
-                </td>                
+                </td>  
+                <td>
+                    <%=conexion.getConStatus()%>
+                </td> 
             </tr> 
             <%}
             %>
