@@ -13,7 +13,7 @@ import javax.persistence.TemporalType;
 @Entity
 public class Conexion implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 335446164L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,11 +35,14 @@ public class Conexion implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     Date yearFecha;
     Long yearConnexion;
+    
+    int status;    
+    int conStatus;
 
     public Conexion() {
     }
 
-    public Conexion(Long id, Long hoyContador, Date hoyFecha, Long hoyConnexion, Long ayerContador, Long ayerConnexion, Long mesContador, Date mesFecha, Long mesConnexion, Long yearContador, Date yearFecha, Long yearConnexion) {
+    public Conexion(Long id, Long hoyContador, Date hoyFecha, Long hoyConnexion, Long ayerContador, Long ayerConnexion, Long mesContador, Date mesFecha, Long mesConnexion, Long yearContador, Date yearFecha, Long yearConnexion, int status, int conStatus) {
         this.id = id;
         this.hoyContador = hoyContador;
         this.hoyFecha = hoyFecha;
@@ -52,6 +55,8 @@ public class Conexion implements Serializable {
         this.yearContador = yearContador;
         this.yearFecha = yearFecha;
         this.yearConnexion = yearConnexion;
+        this.status = status;
+        this.conStatus = conStatus;
     }
 
     public Long getId() {
@@ -150,6 +155,22 @@ public class Conexion implements Serializable {
         this.yearConnexion = yearConnexion;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }   
+
+    public int getConStatus() {
+        return conStatus;
+    }
+
+    public void setConStatus(int conStatus) {
+        this.conStatus = conStatus;
+    }   
+      
     public int getSoloHoyFecha() {
         Calendar cRegistroHoy = Calendar.getInstance();
         cRegistroHoy.setTime(this.getHoyFecha());
@@ -167,7 +188,7 @@ public class Conexion implements Serializable {
         cRegistroYear.setTime(this.getYearFecha());
         return cRegistroYear.get(Calendar.YEAR);
     }
-
+    
     @Override
     public int hashCode() {
         int hash = 0;

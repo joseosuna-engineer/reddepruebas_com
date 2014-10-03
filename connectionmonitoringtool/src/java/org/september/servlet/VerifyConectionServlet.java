@@ -18,8 +18,11 @@ import org.september.entity.Conexion;
 import org.september.entity.ConexionAnual;
 import org.september.entity.ConexionMensual;
 import org.september.util.EnumProperty;
+import org.september.util.StatusEnum;
 
 public class VerifyConectionServlet extends HttpServlet {
+    
+    private final int CONTADOR_ESTADO_CRITICO = 15;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,7 +35,13 @@ public class VerifyConectionServlet extends HttpServlet {
             connection.setRequestMethod("GET");
             connection.connect();
 
-            int code = connection.getResponseCode();
+            int code = 0;
+            
+            try{
+               code = connection.getResponseCode();
+            }catch(IOException io){
+                code = 0;
+            }                    
 
             DaoConexion daoConexion = DaoConexion.INSTANCE;
             DaoConexionMensual daoConexionMensual = DaoConexionMensual.INSTANCE;
@@ -67,7 +76,13 @@ public class VerifyConectionServlet extends HttpServlet {
                 int yearRegistro = cRegistroYear.get(Calendar.YEAR);
 
                 if (code == 200) { // se conecto
-
+                    
+                    // el status puede cambiar
+                     if(conexion.getConStatus()!=0){
+                         conexion.setStatus(StatusEnum.STATUS_INESTABLE.getValue()); 
+                         conexion.setConStatus(1);                     
+                     }                                  
+                    
                     if (hoy == hoyRegistro) {  // el dia no ha cambiado
                         conexion.setHoyConnexion(conexion.getHoyConnexion() + 1);
                         conexion.setHoyContador(conexion.getHoyContador() + 1);
@@ -77,6 +92,8 @@ public class VerifyConectionServlet extends HttpServlet {
                         conexion.setHoyConnexion(1L);
                         conexion.setHoyContador(1L);
                         conexion.setHoyFecha(new Date());
+                        conexion.setStatus(StatusEnum.STATUS_ESTABLE.getValue()); 
+                        conexion.setConStatus(0);  
                     }
                     if (mes == mesRegistro) { // el mes es el mismo
                         conexion.setMesConnexion(conexion.getMesConnexion() + 1);
@@ -117,6 +134,14 @@ public class VerifyConectionServlet extends HttpServlet {
 
                     daoConexion.update(conexion);
                 } else { // no se conecto
+                    
+                    // el status puede cambiar
+                    conexion.setConStatus(conexion.getConStatus()+1);
+                    if(conexion.getConStatus()>=CONTADOR_ESTADO_CRITICO){
+                        conexion.setStatus(StatusEnum.STATUS_CRITICO.getValue());
+                    }else{
+                        conexion.setStatus(StatusEnum.STATUS_INESTABLE.getValue());
+                    }
 
                     if (hoy == hoyRegistro) {
                         conexion.setHoyContador(conexion.getHoyContador() + 1);

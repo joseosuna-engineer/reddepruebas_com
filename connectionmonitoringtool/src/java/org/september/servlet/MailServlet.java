@@ -27,6 +27,7 @@ import org.september.entity.Conexion;
 import org.september.entity.ConexionMensual;
 import org.september.util.ConexionMensualComparable;
 import org.september.util.DateUtil;
+import org.september.util.StatusEnum;
 
 public class MailServlet extends HttpServlet {
 
@@ -107,7 +108,7 @@ public class MailServlet extends HttpServlet {
             Date date = new Date();
 
             DaoConexion.INSTANCE.add(1L, 1L, date, 1L, 1L, 1L, 2L, date, 2L,
-                    2L, date, 2L);
+                    2L, date, 2L, StatusEnum.STATUS_ESTABLE.getValue(), 0);
 
             conexions = daoConexion.getConexions();
         }
