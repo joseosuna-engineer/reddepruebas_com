@@ -1,3 +1,6 @@
+<%@page import="java.util.Calendar"%>
+<%@page import="org.september.entity.ConexionAnual"%>
+<%@page import="org.september.dao.DaoConexionAnual"%>
 <%@page import="java.text.DecimalFormat"%>
 <%@page import="org.september.util.ConexionMensualComparable"%>
 <%@page import="org.september.util.DateUtil"%>
@@ -46,6 +49,19 @@
                     DaoConexionMensual.INSTANCE.add(iL, 1L, 1L);
                 }
                 conexionsMensual = daoConexionMensual.getConexionsMensual();
+            }
+            
+            DaoConexionAnual daoConexionAnual = DaoConexionAnual.INSTANCE;
+            List<ConexionAnual> conexionsAnual = daoConexionAnual.
+                    getConexionsAnual();
+
+            if (conexionsAnual.size() < 1) {
+                Calendar cHoy = Calendar.getInstance();
+                long yeari = cHoy.get(Calendar.YEAR); 
+                Long year = new Long(yeari);
+                DaoConexionAnual.INSTANCE.add(year, 2L, 2L);
+               
+                conexionsAnual = daoConexionAnual.getConexionsAnual();
             }
 
             List<ConexionMensual> conexionsMensualTemp
@@ -191,6 +207,33 @@
                 </td>
                 <td class="red-color-table">
                     <%=decimalFormat.format(perM)%>
+                </td>              
+            </tr> 
+            <%}
+            %>
+        </table>
+        
+        
+        <br />
+        
+         % de desconexion Anual
+        <table >
+            <tr>               
+                <th>A&ntilde;o</th>
+                <th>% desconexion</th>                            
+            </tr>
+
+            <% for (ConexionAnual conexionAnual : conexionsAnual) {
+                    double coxA = conexionAnual.getYearConnexion();
+                    double conA = conexionAnual.getYearContador();
+                    double perA = 100 - ((coxA / conA) * 100);
+            %>
+            <tr> 
+                <td>
+                    <%=conexionAnual.getYear()%>                   
+                </td>
+                <td class="red-color-table">
+                    <%=decimalFormat.format(perA)%>
                 </td>              
             </tr> 
             <%}
