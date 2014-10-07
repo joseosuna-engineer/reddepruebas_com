@@ -35,14 +35,15 @@ public class Conexion implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     Date yearFecha;
     Long yearConnexion;
-    
-    int status;    
+
+    int status;
     int conStatus;
+    boolean sendEmail;
 
     public Conexion() {
     }
 
-    public Conexion(Long id, Long hoyContador, Date hoyFecha, Long hoyConnexion, Long ayerContador, Long ayerConnexion, Long mesContador, Date mesFecha, Long mesConnexion, Long yearContador, Date yearFecha, Long yearConnexion, int status, int conStatus) {
+    public Conexion(Long id, Long hoyContador, Date hoyFecha, Long hoyConnexion, Long ayerContador, Long ayerConnexion, Long mesContador, Date mesFecha, Long mesConnexion, Long yearContador, Date yearFecha, Long yearConnexion, int status, int conStatus, boolean sendEmail) {
         this.id = id;
         this.hoyContador = hoyContador;
         this.hoyFecha = hoyFecha;
@@ -57,6 +58,7 @@ public class Conexion implements Serializable {
         this.yearConnexion = yearConnexion;
         this.status = status;
         this.conStatus = conStatus;
+        this.sendEmail = sendEmail;
     }
 
     public Long getId() {
@@ -161,7 +163,7 @@ public class Conexion implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
-    }   
+    }
 
     public int getConStatus() {
         return conStatus;
@@ -169,8 +171,16 @@ public class Conexion implements Serializable {
 
     public void setConStatus(int conStatus) {
         this.conStatus = conStatus;
-    }   
-      
+    }
+
+    public boolean isSendEmail() {
+        return sendEmail;
+    }
+
+    public void setSendEmail(boolean sendEmail) {
+        this.sendEmail = sendEmail;
+    }
+
     public int getSoloHoyFecha() {
         Calendar cRegistroHoy = Calendar.getInstance();
         cRegistroHoy.setTime(this.getHoyFecha());
@@ -188,7 +198,7 @@ public class Conexion implements Serializable {
         cRegistroYear.setTime(this.getYearFecha());
         return cRegistroYear.get(Calendar.YEAR);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;

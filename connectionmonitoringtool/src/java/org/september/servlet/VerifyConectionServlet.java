@@ -3,10 +3,13 @@ package org.september.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +24,7 @@ import org.september.util.EnumProperty;
 import org.september.util.StatusEnum;
 
 public class VerifyConectionServlet extends HttpServlet {
-    
+
     private final int CONTADOR_ESTADO_CRITICO = 15;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -36,12 +39,12 @@ public class VerifyConectionServlet extends HttpServlet {
             connection.connect();
 
             int code = 0;
-            
-            try{
-               code = connection.getResponseCode();
-            }catch(IOException io){
+
+            try {
+                code = connection.getResponseCode();
+            } catch (IOException io) {
                 code = 0;
-            }                    
+            }
 
             DaoConexion daoConexion = DaoConexion.INSTANCE;
             DaoConexionMensual daoConexionMensual = DaoConexionMensual.INSTANCE;
@@ -53,7 +56,7 @@ public class VerifyConectionServlet extends HttpServlet {
             List<ConexionAnual> conexionAnuals = daoConexionAnual.
                     getConexionsAnual();
 
-            if (conexions.size() > 0 && conexionMensuals.size()>0 && conexionAnuals.size()>0) {
+            if (conexions.size() > 0 && conexionMensuals.size() > 0 && conexionAnuals.size() > 0) {
 
                 Calendar cHoy = Calendar.getInstance();
                 int hoy = cHoy.get(Calendar.DATE);
@@ -76,13 +79,15 @@ public class VerifyConectionServlet extends HttpServlet {
                 int yearRegistro = cRegistroYear.get(Calendar.YEAR);
 
                 if (code == 200) { // se conecto
-                    
+
+                    conexion.setSendEmail(false);
+
                     // el status puede cambiar
-                     if(conexion.getConStatus()!=0){
-                         conexion.setStatus(StatusEnum.STATUS_INESTABLE.getValue()); 
-                         conexion.setConStatus(1);                     
-                     }                                  
-                    
+                    if (conexion.getConStatus() != 0) {
+                        conexion.setStatus(StatusEnum.STATUS_INESTABLE.getValue());
+                        conexion.setConStatus(1);
+                    }
+
                     if (hoy == hoyRegistro) {  // el dia no ha cambiado
                         conexion.setHoyConnexion(conexion.getHoyConnexion() + 1);
                         conexion.setHoyContador(conexion.getHoyContador() + 1);
@@ -92,22 +97,22 @@ public class VerifyConectionServlet extends HttpServlet {
                         conexion.setHoyConnexion(1L);
                         conexion.setHoyContador(1L);
                         conexion.setHoyFecha(new Date());
-                        conexion.setStatus(StatusEnum.STATUS_ESTABLE.getValue()); 
-                        conexion.setConStatus(0);  
+                        conexion.setStatus(StatusEnum.STATUS_ESTABLE.getValue());
+                        conexion.setConStatus(0);
                     }
                     if (mes == mesRegistro) { // el mes es el mismo
                         conexion.setMesConnexion(conexion.getMesConnexion() + 1);
                         conexion.setMesContador(conexion.getMesContador() + 1);
                     } else { // el mes cambio
-                             // busco el mes y actualizo                        
+                        // busco el mes y actualizo                        
                         for (ConexionMensual cms : conexionMensuals) {
                             Long mesL = new Long(mes);
                             if (cms.getMes().equals(mesL)) {
                                 cms.setMesConnexion(conexion.getMesConnexion());
-                                cms.setMesContador(conexion.getMesContador());                        
+                                cms.setMesContador(conexion.getMesContador());
                                 daoConexionMensual.update(cms);
                             }
-                        }                       
+                        }
 
                         conexion.setMesConnexion(1L);
                         conexion.setMesContador(1L);
@@ -122,11 +127,11 @@ public class VerifyConectionServlet extends HttpServlet {
                             Long yearL = new Long(year);
                             if (cas.getYear().equals(yearL)) {
                                 cas.setYearConnexion(conexion.getYearConnexion());
-                                cas.setYearContador(conexion.getYearContador());                        
+                                cas.setYearContador(conexion.getYearContador());
                                 daoConexionAnual.update(cas);
                             }
-                        }  
-                      
+                        }
+
                         conexion.setYearConnexion(1L);
                         conexion.setYearContador(1L);
                         conexion.setYearFecha(new Date());
@@ -134,12 +139,17 @@ public class VerifyConectionServlet extends HttpServlet {
 
                     daoConexion.update(conexion);
                 } else { // no se conecto
-                    
+
                     // el status puede cambiar
-                    conexion.setConStatus(conexion.getConStatus()+1);
-                    if(conexion.getConStatus()>=CONTADOR_ESTADO_CRITICO){
+                    conexion.setConStatus(conexion.getConStatus() + 1);
+                    if (conexion.getConStatus() >= CONTADOR_ESTADO_CRITICO) {
                         conexion.setStatus(StatusEnum.STATUS_CRITICO.getValue());
-                    }else{
+                        // enviar email si es critico y no se ha enviado email
+                        if (!conexion.isSendEmail() && conexion.getConStatus() >= CONTADOR_ESTADO_CRITICO + 1) {
+                            sendEmail();
+                            conexion.setSendEmail(true);
+                        }
+                    } else {
                         conexion.setStatus(StatusEnum.STATUS_INESTABLE.getValue());
                     }
 
@@ -160,10 +170,10 @@ public class VerifyConectionServlet extends HttpServlet {
                             Long mesL = new Long(mes);
                             if (cms.getMes().equals(mesL)) {
                                 cms.setMesConnexion(conexion.getMesConnexion());
-                                cms.setMesContador(conexion.getMesContador());                        
+                                cms.setMesContador(conexion.getMesContador());
                                 daoConexionMensual.update(cms);
                             }
-                        } 
+                        }
 
                         conexion.setMesConnexion(0L);
                         conexion.setMesContador(1L);
@@ -177,7 +187,7 @@ public class VerifyConectionServlet extends HttpServlet {
                             Long yearL = new Long(year);
                             if (cas.getYear().equals(yearL)) {
                                 cas.setYearConnexion(conexion.getYearConnexion());
-                                cas.setYearContador(conexion.getYearContador());                        
+                                cas.setYearContador(conexion.getYearContador());
                                 daoConexionAnual.update(cas);
                             }
                         }
@@ -187,11 +197,13 @@ public class VerifyConectionServlet extends HttpServlet {
                     }
 
                     daoConexion.update(conexion);
+
                 }
 
             }
 
         } finally {
+
             out.close();
         }
     }
@@ -211,6 +223,23 @@ public class VerifyConectionServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
+    }
+
+    private void sendEmail() {
+
+        try {
+            URL url = new URL(EnumProperty.URL_MAIL_SENDER.getValue());
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+
+            connection.getResponseCode();
+
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(VerifyConectionServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(VerifyConectionServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

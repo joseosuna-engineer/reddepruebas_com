@@ -3,6 +3,7 @@ package org.september.servlet;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +23,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.september.dao.DaoConexion;
+import org.september.dao.DaoConexionAnual;
 import org.september.dao.DaoConexionMensual;
 import org.september.entity.Conexion;
+import org.september.entity.ConexionAnual;
 import org.september.entity.ConexionMensual;
 import org.september.util.ConexionMensualComparable;
 import org.september.util.DateUtil;
+import org.september.util.GeneralUtil;
 import org.september.util.StatusEnum;
 
 public class MailServlet extends HttpServlet {
@@ -86,7 +90,7 @@ public class MailServlet extends HttpServlet {
 
     private String buildHtmlMessage() {
 
-        StringBuffer message = new StringBuffer(400);
+        StringBuilder message = new StringBuilder(400);
         message.append("<!DOCTYPE html>");
         message.append("<html>");
         message.append("   <head>");
@@ -108,7 +112,7 @@ public class MailServlet extends HttpServlet {
             Date date = new Date();
 
             DaoConexion.INSTANCE.add(1L, 1L, date, 1L, 1L, 1L, 2L, date, 2L,
-                    2L, date, 2L, StatusEnum.STATUS_ESTABLE.getValue(), 0);
+                    2L, date, 2L, StatusEnum.STATUS_ESTABLE.getValue(), 0, false);
 
             conexions = daoConexion.getConexions();
         }
@@ -131,6 +135,19 @@ public class MailServlet extends HttpServlet {
 
         List<ConexionMensual> conexionsMensualOrd = new ArrayList<ConexionMensual>(conexionsMensualTemp);
 
+        DaoConexionAnual daoConexionAnual = DaoConexionAnual.INSTANCE;
+        List<ConexionAnual> conexionsAnual = daoConexionAnual.
+                getConexionsAnual();
+
+        if (conexionsAnual.size() < 1) {
+            Calendar cHoy = Calendar.getInstance();
+            long yeari = cHoy.get(Calendar.YEAR);
+            Long year = new Long(yeari);
+            DaoConexionAnual.INSTANCE.add(year, 2L, 2L);
+
+            conexionsAnual = daoConexionAnual.getConexionsAnual();
+        }
+
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
         message.append("  <hr />");
@@ -143,6 +160,13 @@ public class MailServlet extends HttpServlet {
         message.append("</div>");
 
         message.append("<div style='clear: both;'/>");
+        message.append("<br />");
+         message.append("<br />");
+        message.append("Estado de la conexion: ");
+        if (conexions.size() > 0) { 
+            message.append(GeneralUtil.getStatusName(conexions.get(0).getStatus()));       
+        }
+        message.append("<br />");
         message.append("<br />");
         message.append("Total de Registro de ");
         message.append(conexions.size());
@@ -163,6 +187,8 @@ public class MailServlet extends HttpServlet {
         message.append("   <th>Conexiones A&ntilde;o</th>");
         message.append("   <th>Intentos A&ntilde;o</th>");
         message.append("   <th>Fecha A&ntilde;o</th>");
+        message.append("<th>Contador de Estados</th>");
+        message.append("<th>Correo enviado</th>");
         message.append("  </tr>");
 
         for (Conexion conexion : conexions) {
@@ -203,6 +229,12 @@ public class MailServlet extends HttpServlet {
             message.append("    </td>");
             message.append("    <td style='color:grey'>");
             message.append(conexion.getSoloYearFecha());
+            message.append("    </td> ");
+            message.append("    <td>");
+            message.append(conexion.getConStatus());
+            message.append("    </td> ");
+            message.append("    <td>");
+            message.append(conexion.isSendEmail());
             message.append("    </td> ");
             message.append("  </tr>");
         }
@@ -283,6 +315,33 @@ public class MailServlet extends HttpServlet {
         message.append("</table>");
 
         message.append("  <br />");
+
+        message.append(" % de desconexion Anual");
+        message.append(" <table>");
+        message.append(" <tr>");
+        message.append(" <th>A&ntilde;o</th>");
+        message.append(" <th>% desconexion</th>");
+        message.append(" </tr>");
+
+        for (ConexionAnual conexionAnual : conexionsAnual) {
+            double coxA = conexionAnual.getYearConnexion();
+            double conA = conexionAnual.getYearContador();
+            double perA = 100 - ((coxA / conA) * 100);
+
+            message.append(" <tr>");
+            message.append(" <td>");
+            message.append(conexionAnual.getYear());
+            message.append(" </td>");
+            message.append(" <td class='red-color-table'>");
+            message.append(decimalFormat.format(perA));
+            message.append(" </td>");
+            message.append(" </tr>");
+        }
+
+        message.append(" </table>");
+
+        message.append(" <br />");
+
         message.append("  <hr />");
         message.append("</body>");
         message.append("</html>");

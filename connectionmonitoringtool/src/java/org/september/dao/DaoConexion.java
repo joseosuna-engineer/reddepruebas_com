@@ -23,13 +23,13 @@ public enum DaoConexion {
     public void add(Long id, Long hoyContador, Date hoyFecha, Long hoyConnexion,
             Long ayerContador, Long ayerConnexion,
             Long mesContador, Date mesFecha, Long mesConnexion,
-            Long yearContador, Date yearFecha, Long yearConnexion, int status, int conStatus) {
+            Long yearContador, Date yearFecha, Long yearConnexion, int status, int conStatus, boolean sendEmail) {
 
         EntityManager em = EMFService.get().createEntityManager();
         Conexion conexion = new Conexion(id, hoyContador, hoyFecha,
                 hoyConnexion, ayerContador, ayerConnexion,
                 mesContador, mesFecha, mesConnexion, yearContador, yearFecha,
-                yearConnexion,status,conStatus);
+                yearConnexion,status,conStatus,sendEmail);
         em.persist(conexion);
         em.close();
     }
