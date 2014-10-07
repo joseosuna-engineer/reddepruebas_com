@@ -36,7 +36,7 @@
                 Date date = new Date();
 
                 DaoConexion.INSTANCE.add(1L, 1L, date, 1L, 1L, 1L, 2L, date, 2L,
-                        2L, date, 2L,StatusEnum.STATUS_ESTABLE.getValue(),0);
+                        2L, date, 2L,StatusEnum.STATUS_ESTABLE.getValue(),0,false);
 
                 conexions = daoConexion.getConexions();
             }
@@ -111,6 +111,7 @@
                 <th>Intentos A&ntilde;o</th>
                 <th>Fecha A&ntilde;o</th>
                 <th>Contador de Estados</th>
+                <th>Correo enviado</th>
             </tr>
 
             <% for (Conexion conexion : conexions) {%>
@@ -153,6 +154,9 @@
                 </td>  
                 <td>
                     <%=conexion.getConStatus()%>
+                </td> 
+                <td>
+                    <%=conexion.isSendEmail()%>
                 </td> 
             </tr> 
             <%}
