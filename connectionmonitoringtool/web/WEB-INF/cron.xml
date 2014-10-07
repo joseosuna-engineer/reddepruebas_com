@@ -3,8 +3,8 @@
     
     <cron>
         <url>/verify</url>
-        <description>Verify conection every 2 minutes</description>
-        <schedule>every 2 minutes</schedule>
+        <description>Verify conection every 1 minute</description>
+        <schedule>every 1 minutes</schedule>
     </cron>
     
     <cron>
