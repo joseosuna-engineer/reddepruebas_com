@@ -161,10 +161,10 @@ public class MailServlet extends HttpServlet {
 
         message.append("<div style='clear: both;'/>");
         message.append("<br />");
-         message.append("<br />");
+        message.append("<br />");
         message.append("Estado de la conexion: ");
-        if (conexions.size() > 0) { 
-            message.append(GeneralUtil.getStatusName(conexions.get(0).getStatus()));       
+        if (conexions.size() > 0) {
+            message.append(GeneralUtil.getStatusName(conexions.get(0).getStatus()));
         }
         message.append("<br />");
         message.append("<br />");
@@ -176,6 +176,7 @@ public class MailServlet extends HttpServlet {
         message.append("<tbody>");
         message.append("<tr>");
         message.append("<th>getId </th>");
+        message.append("<th>Minutos sin conexion</th>");
         message.append(" <th>Conexiones Hoy</th>");
         message.append("<th>Intentos Hoy</th>");
         message.append(" <th>Fecha Hoy</th>");
@@ -197,6 +198,9 @@ public class MailServlet extends HttpServlet {
             message.append(" <td>");
             message.append(conexion.getId());
             message.append(" </td>");
+            message.append("<td class='red-color-table'>");
+            message.append(conexion.getHoyContador() - conexion.getHoyConnexion());
+            message.append("</td>");
             message.append("  <td>");
             message.append(conexion.getHoyConnexion());
             message.append("   </td>");
