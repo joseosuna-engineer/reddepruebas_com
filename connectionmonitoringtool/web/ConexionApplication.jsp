@@ -99,6 +99,7 @@
         <table>
             <tr>
                 <th>getId </th>
+                <th>Minutos sin conexion</th>
                 <th>Conexiones Hoy</th>
                 <th>Intentos Hoy</th>
                 <th>Fecha Hoy</th>
@@ -118,6 +119,9 @@
             <tr> 
                 <td>
                     <%=conexion.getId()%>
+                </td>
+                <td class="red-color-table">
+                    <%=conexion.getHoyContador()-conexion.getHoyConnexion()%>
                 </td>
                 <td>
                     <%=conexion.getHoyConnexion()%>
