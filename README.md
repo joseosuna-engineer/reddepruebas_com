@@ -4,7 +4,9 @@ This repository refers to build tools that help us manage our sites.
 
 Description
 -------------
-**connectionmonitoringtool**: it's used to monitor sites connection.
+What is connectionmonitoringtool?
+===============
+Connectionmonitoringtool is used to monitor sites connection.
 When we create a website we need to be sure the website is operative.
 We can use a browser and type the url website,
 this way wastes a lot of time.
