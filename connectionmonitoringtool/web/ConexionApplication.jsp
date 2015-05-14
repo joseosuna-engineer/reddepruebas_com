@@ -1,3 +1,4 @@
+<%@page import="org.september.util.EnumProperty"%>
 <%
    /**
      * Copyright 2015 Desarrollos Red de Pruebas C.A.
@@ -96,8 +97,7 @@
         <div style="width: 100%;">
             <div class="line"></div>
             <div class="topLine">                
-                <div style="float: left;" class="headline">Conexiones</div>
-
+                <div style="float: left;" class="headline">Conexiones <br /> Host: <%= EnumProperty.URL_CHECK.getValue() %></div>             
             </div>
         </div>
 
