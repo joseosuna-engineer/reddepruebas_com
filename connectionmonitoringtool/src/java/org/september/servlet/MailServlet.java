@@ -38,10 +38,10 @@ public class MailServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String sendEmailFrom = "soporte.red.social.prueba@gmail.com";
-        String sendMailTo = "soporte.red.social.prueba@gmail.com";
+        String sendEmailFrom = "support@reddepruebas.com";
+        String sendMailTo = "support@reddepruebas.com";
         String recipientName = "Mr. Pruebas";
-        String messageSubject = "INFORME DE CONEXION";
+        String messageSubject = "Informe de conexion";
         String htmlBody = buildHtmlMessage();
 
         Properties props = new Properties();

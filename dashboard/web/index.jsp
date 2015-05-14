@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<%-- 
 Copyright 2015 Desarrollos Red de Pruebas C.A.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +12,18 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
--->
+--%>
 
 
-<appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-  <application>cmtool-reddepruebas</application>
-  <version>1</version>
-  <threadsafe>true</threadsafe>
-  
-  <inbound-services>
-    <service>mail</service>
-  </inbound-services>
-  
-</appengine-web-app>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Desarrollos Red de Pruebas C.A.</title>
+    </head>
+    <body>
+        <h1>Desarrollos Red de Pruebas C.A.</h1>
+        <a href="http://cmtool-reddepruebas.appspot.com" >conexiones</a>
+    </body>
+</html>

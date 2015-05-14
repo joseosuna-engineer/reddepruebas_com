@@ -2,8 +2,8 @@ package org.september.util;
 
 public enum EnumProperty {
 
-    URL_CHECK("http://reddepruebas.com.ve"),
-    URL_MAIL_SENDER("http://connectionmonitoringtool.appspot.com/mail");
+    URL_CHECK("http://reddepruebas.com"),
+    URL_MAIL_SENDER("http://cmtool-reddepruebas.appspot.com/mail");
 
     private final String value;
 
