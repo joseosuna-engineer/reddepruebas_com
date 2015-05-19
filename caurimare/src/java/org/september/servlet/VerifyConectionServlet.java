@@ -92,6 +92,7 @@ public class VerifyConectionServlet extends HttpServlet {
                         conexion.setHoyConnexion(conexion.getHoyConnexion() + 1);
                         conexion.setHoyContador(conexion.getHoyContador() + 1);
                     } else { // el dia cambio
+                        sendEmail(); // send notification email when day finishes
                         conexion.setAyerConnexion(conexion.getHoyConnexion());
                         conexion.setAyerContador(conexion.getHoyContador());
                         conexion.setHoyConnexion(1L);
@@ -156,6 +157,7 @@ public class VerifyConectionServlet extends HttpServlet {
                     if (hoy == hoyRegistro) {
                         conexion.setHoyContador(conexion.getHoyContador() + 1);
                     } else {
+                        sendEmail(); // send notification email when day finishes
                         conexion.setAyerConnexion(conexion.getHoyConnexion());
                         conexion.setAyerContador(conexion.getHoyContador());
                         conexion.setHoyConnexion(0L);
