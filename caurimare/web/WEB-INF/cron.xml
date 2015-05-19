@@ -22,12 +22,6 @@ limitations under the License.
         <url>/verify</url>
         <description>Verify conection every 1 minute</description>
         <schedule>every 1 minutes</schedule>
-    </cron>
-    
-    <cron>
-        <url>/mail</url>
-        <description>Send report conection every day on 12 UTC</description>
-        <schedule>every day 12:00</schedule>
-    </cron>  
+    </cron> 
     
 </cronentries>
